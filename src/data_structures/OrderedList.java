@@ -55,6 +55,7 @@ public class OrderedList<E> implements OrderedListADT<E> {
         }
         if ( curr == this.head ) head = curr.next;
         else prev.next = curr.next;
+        this.currentSize--;
         return curr.data;
     }
     
