@@ -221,6 +221,10 @@ public class OrderedVector<E> implements OrderedListADT<E> {
         this.arraySize = tempSize;
     }
     
+    /**
+     * Shifts the right side of an array down by 1 at index and decrements the size.
+     * @param index Shifting point of array.
+     */
     private void shiftArrayLeft(int index){
         if ( index < 0 || index > this.currentSize-1 ) throw new IndexOutOfBoundsException();
         this.currentSize--;
@@ -228,6 +232,10 @@ public class OrderedVector<E> implements OrderedListADT<E> {
             this.storage[i] = this.storage[i+1];
     }
     
+    /**
+     * At some fixed point, index, shifts the array to the right, and increments the size.
+     * @param index Shifting point of the array
+     */
     private void shiftArrayRight(int index){
         if ( index < 0 || index > this.currentSize ) throw new IndexOutOfBoundsException();
         for ( int i = this.currentSize ; i > index ; i-- )
