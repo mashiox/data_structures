@@ -47,7 +47,15 @@ public class OrderedList<E> implements OrderedListADT<E> {
 //  Throws IndexOutOfBoundsException if the index does not map to a valid position within the list.
     public E remove(int index){
         if (index < 0 || index > this.currentSize-1) throw new IndexOutOfBoundsException();
-        return null;
+        Node<E> prev = null,
+                curr = this.head;
+        for ( int idx = 0 ; (idx < index && curr != null) /* I'm scared, okay? */ ; idx++ ){
+            prev = curr;
+            curr = curr.next;
+        }
+        if ( curr == this.head ) head = curr.next;
+        else prev.next = curr.next;
+        return curr.data;
     }
     
 //  Removes and returns the parameter object obj from the list if the list contains it, null otherwise.
@@ -154,19 +162,20 @@ public class OrderedList<E> implements OrderedListADT<E> {
     }
 
     class InnerIterator implements Iterator<E>{
-        private int iterIndex;
+        private Node<E> iterNode;
         
         public InnerIterator(){
-            this.iterIndex = 0;
+            this.iterNode = head;
         }
         
         public boolean hasNext(){
-            return false;
+            return ( this.iterNode != null && this.iterNode.next != null ? true: false );
         }
         
         public E next(){
             if (!this.hasNext()) throw new NoSuchElementException();
-            return null;
+            this.iterNode = this.iterNode.next;
+            return this.iterNode.data;
         }
         
         public void remove(){
