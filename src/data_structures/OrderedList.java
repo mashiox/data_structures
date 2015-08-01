@@ -28,12 +28,12 @@ public class OrderedList<E> implements OrderedListADT<E> {
         Node<E> newNode = new Node<E>(obj),
                 previous = null,
                 current = this.head;
-        while ( current != null && this.doCompare(obj, current.data) > 0 ){
+        while ( current != null && this.doCompare(obj, current.data) >= 0 ){
             previous = current;
             current = current.next;
         }
         if ( previous == null ){
-            newNode.next = head;
+            newNode.next = this.head;
             head = newNode;
         }
         else{
@@ -137,7 +137,7 @@ public class OrderedList<E> implements OrderedListADT<E> {
 
 //  Returns true if the parameter object obj is in the list, false otherwise.
     public boolean contains(E obj){
-        return ( this.find(obj) < 0 ? true : false );
+        return ( this.find(obj) > 0 ? true : false );
     }
 
 //  The list is returned to an empty state.
@@ -170,6 +170,7 @@ public class OrderedList<E> implements OrderedListADT<E> {
         }
         
         public boolean hasNext(){
+            //return (this.iterNode != null);
             return ( this.iterNode != null && this.iterNode.next != null ? true: false );
         }
         
