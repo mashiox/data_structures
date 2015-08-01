@@ -43,37 +43,38 @@ public class OrderedList<E> implements OrderedListADT<E> {
      * @return E
      */
     public E remove(int index){
-        if (index < 0 || index > this.currentSize-1) throw new IndexOutOfBoundsException();
-        Node<E> prev = null,
-                curr = head;
-        for ( int idx = 0 ; (idx < index && curr != null) /* I'm scared, okay? */ ; idx++ ){
-            prev = curr;
-            curr = curr.next;
+        if (index < 0 || index > currentSize-1) throw new IndexOutOfBoundsException();
+        Node<E> previous = null,
+                current = head;
+        for ( int idx = 0 ; (idx < index && current != null) ; idx++ ){
+            previous = current;
+            current = current.next;
         }
-        if ( curr == head ) head = curr.next;
-        else prev.next = curr.next;
+        if ( current == head ) head = current.next;
+        else previous.next = current.next;
         currentSize--;
-        return curr.data;
+        return current.data;
     }
     
     /**
-     * Removes and returns the parameter object obj from the list if the list contains it, null otherwise.
+     * Removes and returns the parameter object obj from the list if the list 
+     * contains it, null otherwise.
      * @param obj
      * @return E
      */
     public E remove(E obj){
-        Node<E> prev = null,
-                curr = head;
-        while ( curr != null && doCompare(obj, curr.data) != 0 ){
-            prev = curr;
-            curr = curr.next;
+        Node<E> previous = null,
+                current = head;
+        while ( current != null && doCompare(obj, current.data) != 0 ){
+            previous = current;
+            current = current.next;
         }
-        if ( curr == null ) return null;
-        if ( curr == head ) head = head.next;
-        else if ( curr.next == null ) prev.next = null;
-        else prev.next = curr.next;
+        if ( current == null ) return null;
+        if ( current == head ) head = head.next;
+        else if ( current.next == null ) previous.next = null;
+        else previous.next = current.next;
         currentSize--;
-        return curr.data;
+        return current.data;
     }
     
 //  Removes and returns the smallest element in the list and null if the it is empty.
@@ -95,16 +96,16 @@ public class OrderedList<E> implements OrderedListADT<E> {
      */
     public E removeMax(){
         if ( head == null ) return null;
-        Node<E> prev = null,
-                curr = head;
-        while ( curr != null && curr.next != null ){
-            prev = curr;
-            curr = curr.next;
+        Node<E> previous = null,
+                current = head;
+        while ( current != null && current.next != null ){
+            previous = current;
+            current = current.next;
         }
-        if ( prev == null ) head = null;
-        else prev.next = null;
+        if ( previous == null ) head = null;
+        else previous.next = null;
         currentSize--;
-        return curr.data;
+        return current.data;
     }
 
     /**
@@ -115,11 +116,11 @@ public class OrderedList<E> implements OrderedListADT<E> {
      */
     public E get(int index){
         if (index < 0 || index > currentSize-1) throw new IndexOutOfBoundsException();
-        Node<E> curr = head;
-        for ( int idx = 0 ; (idx < index && curr != null) ; idx++ )
-            curr = curr.next;
-        if ( curr == null ) return null;
-        return curr.data;
+        Node<E> current = head;
+        for ( int idx = 0 ; (idx < index && current != null) ; idx++ )
+            current = current.next;
+        if ( current == null ) return null;
+        return current.data;
     }
     
     /**
@@ -131,11 +132,11 @@ public class OrderedList<E> implements OrderedListADT<E> {
      * @return E
      */
     public E get(E obj){
-        Node<E> curr = head;
-        while ( curr != null && doCompare(obj, curr.data) != 0 )
-            curr = curr.next;
-        if ( curr == null ) return null;
-        return curr.data;
+        Node<E> current = head;
+        while ( current != null && doCompare(obj, current.data) != 0 )
+            current = current.next;
+        if ( current == null ) return null;
+        return current.data;
     }
     
     /**
@@ -145,13 +146,13 @@ public class OrderedList<E> implements OrderedListADT<E> {
      * @return E
      */
     public int find(E obj){
-        Node<E> curr = head;
+        Node<E> current = head;
         int index = 0;
-        while ( curr != null && doCompare(obj, curr.data) != 0 ){
-            curr = curr.next;
+        while ( current != null && doCompare(obj, current.data) != 0 ){
+            current = current.next;
             index++;
         }
-        if ( curr == null ) return -1;
+        if ( current == null ) return -1;
         return index;
     }
 

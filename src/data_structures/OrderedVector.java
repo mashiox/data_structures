@@ -61,8 +61,6 @@ public class OrderedVector<E> implements OrderedListADT<E> {
      */
     public E removeMin(){
         return ( this.currentSize == 0 ? null : this.remove(0) );
-        //if ( this.currentSize == 0 ) return null;
-        //return this.remove(0);
     }
     
     /**
