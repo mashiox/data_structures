@@ -1,133 +1,153 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+/*  Matt Walther
+    0211
+*/
 package data_structures;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Comparator;
-/**
- *
- * @author Matt
- */
+
 public class OrderedList<E> implements OrderedListADT<E> {
     
     public Node<E> head;
     private int currentSize;
     
     public OrderedList(){
-        this.head = null;
-        this.currentSize = 0;
+        head = null;
+        currentSize = 0;
     }
     
-    //  Adds the Object obj to the list in the correct position as determined by the Comparable interface.
+    /**
+     * Adds the Object obj to the list in the correct position as determined by the Comparable interface.
+     * @param obj 
+     */
     public void insert(E obj){
         Node<E> newNode = new Node<E>(obj),
                 previous = null,
-                current = this.head;
-        while ( current != null && this.doCompare(obj, current.data) >= 0 ){
+                current = head;
+        while ( current != null && doCompare(obj, current.data) >= 0 ){
             previous = current;
             current = current.next;
         }
-        if ( previous == null ){
-            newNode.next = this.head;
-            head = newNode;
-        }
-        else{
-            previous.next = newNode;
-            newNode.next = current;
-        }
-        this.currentSize++;
+        
+        newNode.next = current;
+        if ( previous == null ) head = newNode;
+        else previous.next = newNode;
+        currentSize++;
     }
 
-//  Removes and returns the object located at the parameter index position (zero based).
-//  Throws IndexOutOfBoundsException if the index does not map to a valid position within the list.
+    /**
+     * Removes and returns the object located at the parameter index position (zero based).
+     * Throws IndexOutOfBoundsException if the index does not map to a valid position within the list.
+     * @param index
+     * @return E
+     */
     public E remove(int index){
         if (index < 0 || index > this.currentSize-1) throw new IndexOutOfBoundsException();
         Node<E> prev = null,
-                curr = this.head;
+                curr = head;
         for ( int idx = 0 ; (idx < index && curr != null) /* I'm scared, okay? */ ; idx++ ){
             prev = curr;
             curr = curr.next;
         }
-        if ( curr == this.head ) head = curr.next;
+        if ( curr == head ) head = curr.next;
         else prev.next = curr.next;
-        this.currentSize--;
+        currentSize--;
         return curr.data;
     }
     
-//  Removes and returns the parameter object obj from the list if the list contains it, null otherwise.
+    /**
+     * Removes and returns the parameter object obj from the list if the list contains it, null otherwise.
+     * @param obj
+     * @return E
+     */
     public E remove(E obj){
         Node<E> prev = null,
-                curr = this.head;
-        while ( curr != null && this.doCompare(obj, curr.data) != 0 ){
+                curr = head;
+        while ( curr != null && doCompare(obj, curr.data) != 0 ){
             prev = curr;
             curr = curr.next;
         }
         if ( curr == null ) return null;
-        if ( curr == this.head ) this.head = this.head.next;
+        if ( curr == head ) head = head.next;
         else if ( curr.next == null ) prev.next = null;
         else prev.next = curr.next;
-        this.currentSize--;
+        currentSize--;
         return curr.data;
     }
     
 //  Removes and returns the smallest element in the list and null if the it is empty.
+    /**
+     * Removes and returns the smallest element in the list and null if the it is empty.
+     * @return E
+     */
     public E removeMin(){
-        if ( this.head == null ) return null;
+        if ( head == null ) return null;
         E temp = head.data;
         head = head.next;
-        this.currentSize--;
+        currentSize--;
         return temp;
     }
     
-//  Removes and returns the largest element in the list and null if the it is empty.
+    /**
+     * Removes and returns the largest element in the list and null if the it is empty.
+     * @return E
+     */
     public E removeMax(){
-        if ( this.head == null ) return null;
+        if ( head == null ) return null;
         Node<E> prev = null,
-                curr = this.head;
+                curr = head;
         while ( curr != null && curr.next != null ){
             prev = curr;
             curr = curr.next;
         }
-        if ( prev == null ) this.head = null;
+        if ( prev == null ) head = null;
         else prev.next = null;
-        this.currentSize--;
+        currentSize--;
         return curr.data;
     }
 
-//  Returns the parameter object located at the parameter index position (zero based).
-//  Throws IndexOutOfBoundsException if the index does not map to a valid position within the underlying array
+    /**
+     * Returns the parameter object located at the parameter index position (zero based).
+     * Throws IndexOutOfBoundsException if the index does not map to a valid position within the underlying array
+     * @param index
+     * @return E
+     */
     public E get(int index){
-        if (index < 0 || index > this.currentSize-1) throw new IndexOutOfBoundsException();
-        Node<E> curr = this.head;
+        if (index < 0 || index > currentSize-1) throw new IndexOutOfBoundsException();
+        Node<E> curr = head;
         for ( int idx = 0 ; (idx < index && curr != null) ; idx++ )
             curr = curr.next;
         if ( curr == null ) return null;
         return curr.data;
     }
     
-//  Returns the list object that matches the parameter, and null if the list is empty. 
-//  Also returns null if the obj is NOT in the list.
-//  This method is stable, if obj matches more than one element, the element that
-//  has been in the list longest is returned.
+    /**
+     * Returns the list object that matches the parameter, and null if the list is empty. 
+     * Also returns null if the obj is NOT in the list.
+     * This method is stable, if obj matches more than one element, the element that
+     * has been in the list longest is returned.
+     * @param obj
+     * @return E
+     */
     public E get(E obj){
-        Node<E> curr = this.head;
-        while ( curr != null && this.doCompare(obj, curr.data) != 0 )
+        Node<E> curr = head;
+        while ( curr != null && doCompare(obj, curr.data) != 0 )
             curr = curr.next;
         if ( curr == null ) return null;
         return curr.data;
     }
     
-//  Returns the index of the first element that matches the parameter obj
-//  and -1 if the item is not in the list.
+    /**
+     * Returns the index of the first element that matches the parameter obj
+     * and -1 if the item is not in the list.
+     * @param obj
+     * @return E
+     */
     public int find(E obj){
-        Node<E> curr = this.head;
+        Node<E> curr = head;
         int index = 0;
-        while ( curr != null && this.doCompare(obj, curr.data) != 0 ){
+        while ( curr != null && doCompare(obj, curr.data) != 0 ){
             curr = curr.next;
             index++;
         }
@@ -135,29 +155,45 @@ public class OrderedList<E> implements OrderedListADT<E> {
         return index;
     }
 
-//  Returns true if the parameter object obj is in the list, false otherwise.
+    /**
+     * Returns true if the parameter object obj is in the list, false otherwise.
+     * @param obj
+     * @return boolean
+     */
     public boolean contains(E obj){
-        return ( this.find(obj) > 0 ? true : false );
+        return ( find(obj) > 0 ? true : false );
     }
 
-//  The list is returned to an empty state.
+    /**
+     * The list is returned to an empty state.
+     */
     public void clear(){
-        this.head = null;
-        this.currentSize = 0;
+        head = null;
+        currentSize = 0;
     }
 
-//  Returns true if the list is empty, otherwise false
+    /**
+     * Returns true if the list is empty, otherwise false
+     * @return boolean
+     */
     public boolean isEmpty(){
-        return ( this.head == null ? true : false );
+        return ( head == null ? true : false );
     }
 
-//  Returns the number of Objects currently in the list.
+//  
+    /**
+     * Returns the number of Objects currently in the list.
+     * @return int
+     */
     public int size(){
-        return this.currentSize;
+        return currentSize;
     }
     
-//  Returns an Iterator of the values in the list, presented in
-//  the same order as the list.
+    /**
+     * Returns an Iterator of the values in the list, presented in
+     * the same order as the list.
+     * @return Iterator<E>
+     */
     public Iterator<E> iterator(){
         return new InnerIterator();
     }
@@ -166,18 +202,18 @@ public class OrderedList<E> implements OrderedListADT<E> {
         private Node<E> iterNode;
         
         public InnerIterator(){
-            this.iterNode = head;
+            iterNode = head;
         }
         
         public boolean hasNext(){
-            //return (this.iterNode != null);
-            return ( this.iterNode != null && this.iterNode.next != null ? true: false );
+            return (iterNode != null);
         }
         
         public E next(){
-            if (!this.hasNext()) throw new NoSuchElementException();
-            this.iterNode = this.iterNode.next;
-            return this.iterNode.data;
+            if (!hasNext()) throw new NoSuchElementException();
+            E temp = iterNode.data;
+            iterNode = iterNode.next;
+            return temp;
         }
         
         public void remove(){
