@@ -6,6 +6,11 @@ package data_structures;
 
 import java.util.Iterator;
 
+/**
+ * A priority queue that utilizes an ordered list for storage.
+ * @author Matt
+ * @param <E> Object type
+ */
 public class ListPriorityQueue<E> implements PriorityQueue<E> {
     private OrderedListADT<E> q;
     
