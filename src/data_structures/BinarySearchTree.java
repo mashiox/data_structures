@@ -22,6 +22,7 @@ public class BinarySearchTree<K,V> implements DictionaryADT<K,V>{
     public BinarySearchTree(){
         root = null;
         currentSize = 0;
+        sequenceNumber = 0;
     }
     
     // Returns true if the dictionary has an object identified by
@@ -37,6 +38,7 @@ public class BinarySearchTree<K,V> implements DictionaryADT<K,V>{
         if ( root == null ) root = new Node<K,V>(key,value);
         else insert(key, value, root, null, false);
         currentSize++;
+        sequenceNumber++;
         return true;
     }
     
@@ -54,19 +56,27 @@ public class BinarySearchTree<K,V> implements DictionaryADT<K,V>{
     // Deletes the key/value pair identified by the key parameter.
     // Returns true if the key/value pair was found and removed,
     // otherwise false.
-    public boolean remove(K key){
+    public boolean remove(K key){    	
+        if ( removeHelper(key) ){
+            currentSize--;
+            sequenceNumber++;
+            return true;
+        }
+        return false;
+        
+    }
+    
+    private boolean removeHelper(K key){
         if ( root == null ) return false;
         Node<K,V> ntd = findNode(key, root);
         if ( ntd == null ) return false;
         Node<K,V> parent = findParent(key, root),
                   iOS = ntd.rightChild,
-                  iOSp = iOS;
+                  iOSp = null;
         while ( iOS != null && iOS.leftChild != null ){
             iOSp = iOS;
             iOS = iOS.leftChild;
         }
-        if ( iOSp != null )
-            iOSp.leftChild = null;
         if ( parent == null ){
             // handle root
             if ( root.leftChild == null && root.rightChild == null )
@@ -76,38 +86,61 @@ public class BinarySearchTree<K,V> implements DictionaryADT<K,V>{
             else if ( root.leftChild == null )
                 root = root.rightChild; 
             else {
+            	if ( iOSp == null )
+            		root.rightChild = iOS.rightChild;
+            	else 
+            		iOSp.leftChild = iOS.rightChild;
                 root.key = iOS.key;
                 root.value = iOS.value;
             }
         }
         else {
             boolean leftChild = isLeftChildNode(parent, ntd);
-            if ( ntd.leftChild == null && ntd.rightChild == null ){
+            if ( ntd.leftChild == null && ntd.rightChild == null ){//no kids
                 if ( leftChild )
-                    parent.leftChild = null;
-                else 
-                    parent.rightChild = null;
-            }
-            else if ( ntd.leftChild == null ){
-                if ( leftChild )
-                    parent.leftChild = ntd.rightChild;
+                	parent.leftChild = null;
                 else
-                    parent.rightChild = ntd.rightChild;
+                	parent.rightChild = null;
             }
-            else if ( ntd.rightChild == null ){
-                if ( leftChild )
-                    parent.leftChild = ntd.leftChild;
-                else
-                    parent.rightChild = ntd.leftChild;
+            else if ( ntd.leftChild == null ){// has right kid
+                if ( leftChild ) // ntd exists on left of parent
+                	parent.leftChild = ntd.rightChild;
+                else // ntd exists on right of parent
+                	parent.rightChild = ntd.rightChild;
             }
-            else {
-                remove(iOS.key);
-                currentSize++;
-                ntd.key = iOS.key;
-                ntd.value = iOS.value;
+            else if ( ntd.rightChild == null ){// has left kid
+                if ( leftChild ) // ntd exists on left of parent
+                	parent.leftChild = ntd.leftChild;
+                else // ntd exists on right of parent
+                	parent.rightChild = ntd.leftChild;
+            }
+            else {//2 kids
+            	if ( leftChild ){ // ntd exists on left of parent
+            		if ( iOSp == null ){
+            			ntd.key = iOS.key;
+            			ntd.value = iOS.value;
+                                ntd.rightChild = iOS.rightChild;
+            		}
+            		else {
+            			ntd.key = iOS.key;
+            			ntd.value = iOS.value;
+                                iOSp.leftChild = iOS.rightChild;
+            		}
+            	}
+            	else { // ntd exists on right of parent
+            		if ( iOSp == null ){
+            			ntd.key = iOS.key;
+            			ntd.value = iOS.value;
+            			ntd.rightChild = iOS.rightChild;
+            		}
+            		else {
+            			ntd.key = iOS.key;
+            			ntd.value = iOS.value;
+            			iOSp.leftChild = iOS.rightChild;
+            		}
+            	}
             }
         }
-        currentSize--;
         return true;
     }
 
@@ -172,12 +205,15 @@ public class BinarySearchTree<K,V> implements DictionaryADT<K,V>{
     private Node<K,V> findParent(K key, Node<K,V> n){
         if ( n == null ) return null;
         int cmp = doCompareKeys(key, n.key);
+        
         if ( cmp == 0 ) return null; // parent is root
-        else if ( cmp < 0 ){
+        
+        if ( cmp < 0 ){
             if ( doCompareKeys(key, n.leftChild.key ) == 0 )
                 return n;
             return findParent(key, n.leftChild);
         }
+        
         if ( doCompareKeys( key, n.rightChild.key ) == 0 )
             return n;
         return findParent(key, n.rightChild);
