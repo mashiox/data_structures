@@ -1,3 +1,8 @@
+/**
+ * Matt Walther
+ * 0211
+ */
+
 import java.util.Iterator;
 import data_structures.*;
 
@@ -43,23 +48,42 @@ public class StockItem implements Comparable<StockItem> {
         return SKU.hashCode();
     }
        
-    // standard get methods
+    /**
+     * Returns SKU Value
+     * @return String
+     */
     public String getSKU(){
         return SKU;
     }
     
+    /**
+     * Returns description Value
+     * @return String
+     */
     public String getDescription(){
         return description;
     }
     
+    /**
+     * Returns Vendor Value
+     * @return String
+     */
     public String getVendor(){
         return vendor;
     }
     
+    /**
+     * Returns cost Value
+     * @return float
+     */
     public float getCost(){
         return cost;
     }
     
+    /**
+     * Returns retail Value
+     * @return float
+     */
     public float getRetail(){
         return retail;
     }
